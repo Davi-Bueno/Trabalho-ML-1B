@@ -95,6 +95,7 @@ def carregar_dados(uploaded_file):
 
 
 nome_usuario = solicitar_nome_usuario()
+
 if nome_usuario:
     uploaded_file = st.file_uploader("Escolha o arquivo CSV ou JSON", type=['csv', 'json'])
 
@@ -133,3 +134,23 @@ if nome_usuario:
                 "Registros sem informação sobre nível de escolaridade dos pais: "
                 f"{registros_nulos_educacao}"
             )
+
+        # Tab 2: Limpeza de Dados
+        with tab2:
+            st.header("2. Limpeza de Dados")
+
+            if st.button("Limpar Dados"):
+                df_limpo = df.copy()
+                df_limpo = df_limpo.dropna(subset=['Parent_Education_Level'])
+
+                mediana_attendance = df['Attendance (%)'].median()
+                df_limpo['Attendance (%)'] = df_limpo['Attendance (%)'].fillna(mediana_attendance)
+
+                st.write("Dados limpos:")
+                st.dataframe(df_limpo)
+
+                soma_attendance = df_limpo['Attendance (%)'].sum()
+                st.metric("Soma total de presença", f"{soma_attendance:.2f}%")
+
+                st.session_state.data_cleaned = True
+                log_acao("Dados limpos")
