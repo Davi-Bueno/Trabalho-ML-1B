@@ -207,7 +207,7 @@ if nome_usuario:
                     st.subheader("Horas de Sono x Nota Final (Detalhado)")
                     plt.figure(figsize=(8, 5))
                     sns.scatterplot(data=df_limpo, x='Sleep_Hours_per_Night', y='Final_Score')
-                    plt.title('Gráfico de Dispersão Simples')
+                    plt.title('Relação entre Horas de Sono X Nota Final')
                     plt.xlabel('Horas de Sono por Noite')
                     plt.ylabel('Nota Final')
                     st.pyplot(plt)
