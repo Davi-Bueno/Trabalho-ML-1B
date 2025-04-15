@@ -95,3 +95,41 @@ def carregar_dados(uploaded_file):
 
 
 nome_usuario = solicitar_nome_usuario()
+if nome_usuario:
+    uploaded_file = st.file_uploader("Escolha o arquivo CSV ou JSON", type=['csv', 'json'])
+
+    if validar_arquivo(uploaded_file):
+        log_acao(f"Arquivo carregado: {uploaded_file.name}")
+        df = carregar_dados(uploaded_file)
+        df.replace("None", pd.NA, inplace=True)
+
+        df_limpo = df.copy()
+
+        if 'data_cleaned' not in st.session_state:
+            st.session_state.data_cleaned = False
+
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "Dados Básicos",
+            "Limpeza de Dados",
+            "Análise Estatística",
+            "Gráficos"
+        ])
+
+        # Tab 1: Dados Básicos
+        with tab1:
+            st.header("1. Informações Básicas")
+            st.write(f"Quantidade de dados carregados: {len(df)}")
+            total_mulheres = df[df['Gender'] == "Female"].shape[0]
+            total_homens = df[df['Gender'] == "Male"].shape[0]
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Total de Mulheres", total_mulheres)
+            with col2:
+                st.metric("Total de Homens", total_homens)
+
+            registros_nulos_educacao = df['Parent_Education_Level'].isnull().sum()
+            st.write(
+                "Registros sem informação sobre nível de escolaridade dos pais: "
+                f"{registros_nulos_educacao}"
+            )
