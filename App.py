@@ -154,3 +154,30 @@ if nome_usuario:
 
                 st.session_state.data_cleaned = True
                 log_acao("Dados limpos")
+
+        # Tab 3: Análise Estatística
+        if st.session_state.data_cleaned:
+            with tab3:
+                st.header("3. Análise Estatística")
+                colunas_numericas = df_limpo.select_dtypes(include=['int64', 'float64']).columns
+                coluna = st.selectbox("Escolha uma coluna para análise:", colunas_numericas)
+
+                if coluna and validar_coluna_numerica(df_limpo, coluna):
+                    media = df_limpo[coluna].mean()
+                    mediana = df_limpo[coluna].median()
+                    moda = df_limpo[coluna].mode()[0]
+                    desvio_padrao = df_limpo[coluna].std()
+
+                    col1, col2, col3, col4 = st.columns(4)
+                    with col1:
+                        st.metric("Média", f"{media:.2f}")
+                    with col2:
+                        st.metric("Mediana", f"{mediana:.2f}")
+                    with col3:
+                        st.metric("Moda", f"{moda:.2f}")
+                    with col4:
+                        st.metric("Desvio Padrão", f"{desvio_padrao:.2f}")
+                    log_acao(f"Análise estatística realizada na coluna: {coluna}")
+        else:
+            with tab3:
+                st.warning("Por favor, execute a limpeza de dados primeiro.")                
